@@ -12,10 +12,48 @@ namespace Core_BasicTheading
                 Console.WriteLine($"Child : Invoking thread : {i} ");
                 // Simulate work time for the thread
                 Thread.Sleep(500);
-                Console.WriteLine ($"Child : Terminating thread  {i} ");
+                Console.WriteLine($"Child : Terminating thread  {i} ");
 
             }
-        
+
+        }
+    }
+
+    class ThreadTimer
+    {
+        public Thread thread;
+        Timer timer;
+        public ThreadTimer(string name, Timer t)
+        {
+            thread = new Thread(new ThreadStart(this.run));
+            thread.Name = name;
+            timer = t;
+            thread.Start();
+
+        }
+
+        private void run()
+        {
+            if (thread.Name == "Tick")
+            {
+                for (int i = 1; i < 5; i++)
+                {
+                    Console.WriteLine("----Tick :" + i);
+                    timer.Tick(true);
+                    
+                }
+                timer.Tick(false);
+            }
+            else
+            {
+                for (int i = 1; i < 5; i++)
+                {
+                    Console.WriteLine("++++Tock :" + i);
+                    timer.Tock(true);
+                }
+                timer.Tock(false);
+
+            }
         }
     }
 
@@ -43,6 +81,18 @@ namespace Core_BasicTheading
             Console.WriteLine("Main Thread : Wait to child thread terminates, calling join");
             thread.Join();
             Console.WriteLine("Main thread : finished wating child one");
+
+
+            // Test the timer Threads
+            // Shared timer
+            Timer timer = new Timer();
+            ThreadTimer threadTimerTick = new ThreadTimer("Tick", timer);
+            ThreadTimer threadTimerTock = new ThreadTimer("Tock", timer);
+
+            threadTimerTick.thread.Join();
+            threadTimerTock.thread.Join();
+
+            Console.WriteLine("Timer Stopped");
                         
             
         }
